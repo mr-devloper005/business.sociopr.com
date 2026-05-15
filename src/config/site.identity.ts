@@ -1,10 +1,10 @@
 export const siteIdentity = {
   code: process.env.NEXT_PUBLIC_SITE_CODE || 'q4covnfbb4',
   name: process.env.NEXT_PUBLIC_SITE_NAME || 'Business Sociopr',
-  tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'Independent media updates',
+  tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'Media Press Wire & Distribution',
   description:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ||
-    'A media-distribution newsroom for announcements, coverage, and press updates on Business Sociopr.',
+    'Business Sociopr is a trusted media press wire for distributing company announcements, press releases, and investor updates to journalists and newsrooms worldwide.',
   domain: process.env.NEXT_PUBLIC_SITE_DOMAIN || 'business.sociopr.com',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://business.sociopr.com',
   ogImage: process.env.NEXT_PUBLIC_SITE_OG_IMAGE || '/og-default.png',

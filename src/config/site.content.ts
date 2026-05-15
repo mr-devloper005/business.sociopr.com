@@ -2,18 +2,18 @@ import type { TaskKey } from '@/lib/site-config'
 
 export const siteContent = {
   navbar: {
-    tagline: 'Release media wire · Media intelligence',
+    tagline: 'Media Press Wire · Business Sociopr · Global Distribution',
   },
   footer: {
-    tagline: 'Distribution, measurement, and trust for communicators and journalists',
+    tagline: 'Trusted press release distribution for communicators, journalists, and newsrooms worldwide.',
   },
   hero: {
-    badge: 'Press wire',
-    title: ['Unmatched visibility. Powerful results.'],
+    badge: 'Media Press Wire',
+    title: ['Your story deserves to be heard — everywhere.', 'Global press release distribution.'],
     description:
       'Send announcements with confidence, reach relevant journalists, and see how your story travels across the media landscape.',
     primaryCta: {
-      label: 'Send a release media',
+      label: 'Submit a Press Release',
       href: '/create/mediaDistribution',
     },
     secondaryCta: {
@@ -61,7 +61,7 @@ export const siteContent = {
   cta: {
     badge: 'Talk to us',
     title: 'When your next announcement needs reach and a calm workflow.',
-    description: 'We help communicators line up review, release timing, and measurement in one place—without the noise of a generic content feed.',
+    description: 'We help communicators line up review, release timing, and measurement in one place — without the noise of a generic content feed.',
     primaryCta: {
       label: 'Contact the desk',
       href: '/contact',
@@ -71,7 +71,7 @@ export const siteContent = {
       href: '/public-relation',
     },
   },
-  taskSectionHeading: 'Release media & updates',
+  taskSectionHeading: 'Press Releases & Media Updates',
   taskSectionDescriptionSuffix: 'Latest wire posts and company announcements for your market.',
 } as const
 
