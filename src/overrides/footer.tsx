@@ -1,94 +1,139 @@
 import Link from 'next/link'
-import { Newspaper } from 'lucide-react'
+import { FileText, ArrowRight } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { siteContent } from '@/config/site.content'
+import { fetchTaskPosts } from '@/lib/task-data'
+import { CATEGORY_OPTIONS, normalizeCategory } from '@/lib/categories'
 
 export const FOOTER_OVERRIDE_ENABLED = true
 
-const column = (title: string, items: { label: string; href: string }[]) => (
-  <div>
-    <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#F9E4D4]/70">{title}</h3>
-    <ul className="mt-4 space-y-2.5 text-sm text-[#F9E4D4]/80">
-      {items.map((item) => (
-        <li key={item.href + item.label}>
-          <Link href={item.href} className="transition hover:text-[#D67D3E]">
-            {item.label}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  </div>
-)
+const columns = [
+  {
+    title: 'Product',
+    links: [
+      { label: 'Press releases', href: '/updates' },
+      { label: 'Submit a release', href: '/create/mediaDistribution' },
+      { label: 'Search', href: '/search' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: '/contact' },
+      { label: 'Press room', href: '/press' },
+    ],
+  },
+  {
+    title: 'Resources',
+    links: [
+      { label: 'Privacy', href: '/privacy' },
+      { label: 'Terms', href: '/terms' },
+      { label: 'Cookies', href: '/cookies' },
+    ],
+  },
+]
 
-export function FooterOverride() {
-  const primary = SITE_CONFIG.tasks.find((t) => t.enabled)
+const getCategoryLabel = (value: string) => {
+  const normalized = normalizeCategory(value)
+  return CATEGORY_OPTIONS.find((item) => item.slug === normalized)?.name || value
+}
+
+export async function FooterOverride() {
+  const primary = SITE_CONFIG.tasks.find((t) => t.enabled) || SITE_CONFIG.tasks[0]
+  const posts = await fetchTaskPosts('mediaDistribution', 200, { allowMockFallback: false })
+  const categories = Array.from(
+    new Map(
+      posts
+        .map((post) => {
+          const content = post.content && typeof post.content === 'object' ? (post.content as Record<string, unknown>) : {}
+          const raw = typeof content.category === 'string' ? content.category.trim() : ''
+          if (!raw) return null
+          const slug = normalizeCategory(raw)
+          return {
+            slug,
+            name: getCategoryLabel(raw),
+          }
+        })
+        .filter((item): item is { slug: string; name: string } => Boolean(item))
+        .map((item) => [item.slug, item])
+    ).values()
+  ).slice(0, 8)
+
   return (
-    <footer className="border-t border-[#9C0F48]/20 bg-[#1a0a10] text-[#F9E4D4]/80">
-      {/* Top accent bar */}
-      <div className="h-1 w-full bg-gradient-to-r from-[#9C0F48] via-[#D67D3E] to-[#9C0F48]" />
-
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_0.7fr_0.7fr_0.7fr]">
-          {/* Brand column */}
+    <footer className="border-t border-white/10 bg-[linear-gradient(180deg,#04004a_0%,#1c045d_48%,#0f0238_100%)] text-white">
+      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#9C0F48]">
-                <Newspaper className="h-5 w-5 text-[#F9E4D4]" />
-              </div>
+            <div className="flex items-center gap-3">
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-white/10">
+                <span className="font-[family-name:var(--font-display)] text-xl font-semibold text-[#f3c5ff]">{SITE_CONFIG.name.slice(0, 1).toLowerCase()}</span>
+              </span>
               <div>
-                <p className="font-display text-xl font-semibold text-[#F9E4D4]">{SITE_CONFIG.name}</p>
-                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#D67D3E]">
-                  Media Press Wire
-                </p>
+                <p className="font-[family-name:var(--font-display)] text-xl font-semibold">{SITE_CONFIG.name}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f3c5ff]/80">{siteContent.footer.tagline}</p>
               </div>
             </div>
-            <p className="mt-4 max-w-sm text-sm leading-7 text-[#F9E4D4]/60">
-              {siteContent.footer.tagline}
-            </p>
-            <p className="mt-3 max-w-sm text-sm leading-7 text-[#F9E4D4]/50">{SITE_CONFIG.description}</p>
-
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/65">{SITE_CONFIG.description}</p>
             {primary ? (
               <Link
                 href={primary.route}
-                className="mt-6 inline-flex items-center gap-2 rounded-lg border border-[#D67D3E]/30 bg-[#D67D3E]/10 px-4 py-2.5 text-sm font-semibold text-[#D67D3E] transition hover:border-[#D67D3E]/60 hover:bg-[#D67D3E]/20"
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#f3c5ff] px-4 py-2.5 text-sm font-semibold text-[#04004a] transition hover:bg-white"
               >
-                {primary.label}
-                <span aria-hidden>→</span>
+                <FileText className="h-4 w-4" />
+                Browse {primary.label}
+                <ArrowRight className="h-4 w-4" />
               </Link>
             ) : null}
           </div>
-
-          {column('Press Wire', [
-            { label: 'Latest Releases', href: '/public-relation' },
-            { label: 'Submit a Release', href: '/create/mediaDistribution' },
-            { label: 'Search Archive', href: '/search' },
-            { label: 'Categories', href: '/public-relation' },
-          ])}
-
-          {column('Company', [
-            { label: 'About Us', href: '/about' },
-            { label: 'Contact', href: '/contact' },
-            { label: 'Help Center', href: '/help' },
-          ])}
-
-          {column('Legal', [
-            { label: 'Privacy Policy', href: '/privacy' },
-            { label: 'Terms of Service', href: '/terms' },
-            { label: 'Cookie Policy', href: '/cookies' },
-          ])}
+          {columns.map((col) => (
+            <div key={col.title}>
+              <h3 className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f3c5ff]/75">{col.title}</h3>
+              <ul className="mt-5 space-y-3 text-sm">
+                {col.links.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className="text-white/75 transition hover:text-white">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/8 pt-6 sm:flex-row">
-          <p className="text-xs text-[#F9E4D4]/35">
+        {categories.length ? (
+          <div className="mt-10 border-t border-white/10 pt-8">
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f3c5ff]/75">Categories</h3>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <Link
+                  key={category.slug}
+                  href={`/updates?category=${category.slug}`}
+                  className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:border-[#f3c5ff]/60 hover:bg-white/10 hover:text-white"
+                >
+                  {category.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
+          <p>
             &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
           </p>
-          <div className="flex items-center gap-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#9C0F48]" />
-            <span className="h-1.5 w-1.5 rounded-full bg-[#D67D3E]" />
-            <span className="h-1.5 w-1.5 rounded-full bg-[#F9E4D4]/40" />
+          <div className="flex flex-wrap gap-4">
+            <Link href="/privacy" className="hover:text-white/80">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-white/80">
+              Terms
+            </Link>
+            <Link href="/contact" className="hover:text-white/80">
+              Support
+            </Link>
           </div>
-          <p className="text-xs text-[#F9E4D4]/35">{SITE_CONFIG.domain}</p>
         </div>
       </div>
     </footer>
